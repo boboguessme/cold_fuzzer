@@ -1,23 +1,13 @@
 # -*- coding: utf-8 -*-
 
+## 代表整个生成页面代码
 class PageHolder(object):
+
+	## 构造函数
 	def __init__(self):
-		""""""
-		self.page = '<!doctyle html>'
-		self.tree = []
+		# html5头
+		self._page = '<!doctyle html>'
+		self._tree = []
 	
-	def add_element(self, ele):
-		""""""
-		pass
-	
-
-CURRENT_ELEMENTS = []
-
-ELEMENTS = []
-EVENTS = []
-COMMANDS = []
-	
-def build_base_tree():
-	""""""
-	html = Tag('html')
-	
+	#def add_element(self, ele):
+	#	pass

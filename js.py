@@ -45,6 +45,37 @@ class TYPE(object):
 #  @remark 分支和循环太高级，就不支持了 - -#	
 class JsGen(object):
 	
+	## @var ELEMENTS
+	#  @todo 补齐列表
+	#  元素列表
+	ELEMENTS = ["CANVAS",]
+	
+	## @var EVENTS
+	#  @todo 补齐列表
+	#  事件列表
+	EVENTS = ['select',]
+	
+	## @var COMMANDS
+	# @todo 补齐列表
+	#  命令列表
+	COMMANDS = ['delete',]
+	
+	## @var INTERESTING_VALUES
+	#  特殊值列表
+	INTERESTING_VALUES = [0,]
+	
+	## @var MAX_ELEMENTS
+	#  添加元素数量随机mod
+	MAX_ELEMENTS = 20
+	
+	## @var MAX_PROPERTY
+	#  添加属性数量随机mod
+	MAX_PROPERTY = 9
+	
+	## @var MAX_LISTENERS
+	#  添加事件数量随机mod
+	MAX_LISTENERS = 5
+	
 	## @var ids
 	#  页面元素id列表	
 	## @var rand
