@@ -2,55 +2,62 @@
 
 from tag import Tag
 
-#  产生元素相关的页面代码
-
+## 产生元素树页面代码
+#  @attention 元素包含的子元素按照添加顺序排列
 class Element(object):
+
+	## @var tag
+	#  tag.Tag 对象
+	## @var attributes
+	#  元素属性
+	## @var text
+	#  text节点内容
+	## @var sub_elements
+	#  子元素
+	
+	## 构造函数
+	#  @param element_tag tag.Tag 对象
 	def __init__(self, element_tag):
-		"""
-			@element_tag
-		"""
 		self.tag = Tag(element_tag)
 		self.attributes = {}
 		self.text = ''
 		self.sub_elements = []
 		
+	## 设置元素属性
+	#  @param name 属性名
+	#  @param value 属性值
 	def set_attribute(self, name, value):
-		"""
-			@name attribute
-			@value
-		"""
 		self.attributes[name] = value
 	
+	## 设置text节点内容
+	#  @param text
 	def set_text(self, text):
-		"""
-			@text text node
-		"""
 		self.text = text
 		
+	## 添加子元素
+	#  @param element element.Element 对象
 	def append_child(self, element):
-		"""
-			@element html element
-		"""
 		self.sub_elements.append(element)
 		
-	def open(self):
-		""""""
+	## 生成元素打开内容
+	#  @return 元素打开代码
+	def _open(self):
 		return self.tag.open(self.attributes, self.text)
 		
-	def close(self):
-		""""""
+	## 生成元素闭合内容
+	#  @return 元素闭合代码
+	def _close(self):
 		return self.tag.close()
 		
+	## 生成元素代码
+	#  @return 对应元素树全部代码
 	def convert_to_code(self):
-		"""
-			@return elements tree html code
-		"""
 		code_helper = []
 		reverse_sub_elements = []
-		code_helper.append(self.open())
+		code_helper.append(self._open())
 		for element in self.sub_elements:
 			code_helper.append(element.convert_to_code())
-		code_helper.append(self.close())
+		code_helper.append(self._close())
 		return ''.join(code_helper)
 		
 if __name__ == '__main__':

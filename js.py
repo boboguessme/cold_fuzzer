@@ -2,27 +2,34 @@
 
 import utils
 
-#  JS变量类型转换
-# TODO 考虑是否把declare、assign、invoke_function包装成一个statement类
-
+## js变量类型转换
+#  @todo 考虑是否把declare、assign、invoke_function包装成一个statement类
+#  @todo 没有支持赋值语句定义匿名函数
 class TYPE(object):
+
+	## JavaScript NULL显示形式
 	NULL = 0
+	## JavaScript 数字显示形式
 	NUMBER = 1
+	## JavaScript 字符串显示形式
 	STRING = 2
+	## JavaScript 变量显示形式
 	VARIABLE = 3
-	FUNCTION = 4	# TODO 还没有支持赋值语句定义匿名函数
+	## JavaScript 函数显示形式
+	FUNCTION = 4
 	
+	## 构造函数
 	def __init__(self):
-		""""""
 		pass
 		
+	## 将类型转换成显示形式
+	#  @param value 显示值
+	#  @param type 显示类型
+	#  @return 对应值的显示形式
+	#  @return 如果不支持的显示类型，返回'null'
+	#  @remark 没有列表类型，补充的话应该可以直接str()转换
 	@staticmethod
 	def convert(value, type):
-		"""
-			@value
-			@type
-		"""
-		# 没有列表类型，补充的话应该可以直接str()转换
 		if type == TYPE.NULL:
 			return 'null'
 		elif type == TYPE.NUMBER:
@@ -34,46 +41,54 @@ class TYPE(object):
 		else:
 			return 'null'
 			
-#  产生JS操作代码
-			
+## js代码生成		
+#  @remark 分支和循环太高级，就不支持了 - -#	
 class JsGen(object):
+	
+	## @var ids
+	#  页面元素id列表	
+	## @var rand
+	#  随机数据对象
+	
+	## 构造函数
+	#  @param ids 页面元素id列表
 	def __init__(self, ids):
-		"""
-			@ids html elements
-		"""
 		self.ids = ids
 		self.rand = utils.Rand()
 		
+	## 生成变量声明语句
+	#  @param name 变量名
+	#  @param value 变量值
+	#  @param type js.TYPE 支持类型
+	#  @return 变量声明语句
+	#  @remark 代码已经添加';'
 	@staticmethod
 	def declare(name, value=None, type=None):
-		"""
-			@name
-			@value
-			@type one of TYPE
-		"""
 		if value is None:
 			return 'var %s;' % name
 		else:
-			# assign has added ;
+			# assign函数已经添加了';'，所以这里不需要追加
 			return 'var %s' % JsGen.assign(name, value, type)
 		
+	## 生成赋值语句
+	#  @param lvalue 赋值左值
+	#  @param rvalue 赋值右值
+	#  @param type js.TYPE 支持类型
+	#  @return 赋值语句
+	#  @remark 代码已经添加';'
 	@staticmethod
 	def assign(lvalue, rvalue, type):
-		"""		
-			@lvalue
-			@rvalue
-			@type ont of TYPE
-		"""
 		return '%s = %s;' % (lvalue, TYPE.convert(rvalue, type))
 		
-	
+	## 生成函数调用语句
+	#  @param invoker 函数所属对象 
+	#  @param function 函数名
+	#  @param args 函数参数 {参数值:js.TYPE 支持类型}
+	#  @return 函数调用语句
+	#  @remark 代码已经添加';'
+	#  @attention invoker不可为空，比如alert应以window.alert形式调用
 	@staticmethod
 	def invoke_function(invoker, function, args={}):
-		"""
-			@invoker
-			@function
-			@args {type : value, ...}  
-		"""
 		args_helper = []
 		for value, type in args.items():
 			args_helper.append(TYPE.convert(value, type))
@@ -81,13 +96,13 @@ class JsGen(object):
 		
 		return '%s.%s(%s);' % (invoker, function, args_str)
 		
+	## 生成函数定义
+	#  @param name 函数名
+	#  @param arg_names 函数参数表
+	#  @param statements 函数的语句序列
+	#  @return 函数定义代码
 	@staticmethod
 	def create_function(name, arg_names=[], statements=[]):
-		"""
-			@name
-			@arg_names
-			@statements
-		"""
 		return 'function %s(%s){%s}' % \
 			(name, ', '.join(arg_names), ''.join(statements))
 		

@@ -2,26 +2,27 @@
 
 import random
 
-# 随机数据模块
-
+## 随机实用类
 class Rand(object):
+	
+	## 构造函数
+	#  @param seed 随机种子
 	def __init__(self, seed=None):
-		"""
-			@seed random seed
-		"""
 		if seed is None:
 			random.seed()
 		else:
 			random.seed(seed)
 
+	## 生成随机整数
+	#  @param mod 生成整数最大值
+	#  @return 随机整数
 	def rint(self, mod):
-		"""
-			@mod 
-		"""
 		return random.randint(0, mod)
 	
+	## 生成随机布尔值
+	#  @return 随机布尔值
+	#  @attention 返回值是python布尔形式
 	def rbool(self):
-		""""""
 		return True if self.rint(2) == 1 else False
 		
 if __name__ == '__main__':
