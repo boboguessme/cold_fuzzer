@@ -15,9 +15,9 @@ class Rand(object):
 
 	## 生成随机整数
 	#  @param mod 生成整数最大值
-	#  @return 随机整数
+	#  @return 随机整数在0 -- (mod-1)
 	def rint(self, mod):
-		return random.randint(0, mod)
+		return random.randint(0, mod-1)
 	
 	## 生成随机布尔值
 	#  @return 随机布尔值

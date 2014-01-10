@@ -43,12 +43,13 @@ class TYPE(object):
 			
 ## js代码生成		
 #  @remark 分支和循环太高级，就不支持了 - -#	
+#  @attention 为了简单起见，每一个元素的引用变量和id一致
 class JsGen(object):
 	
 	## @var ELEMENTS
 	#  @todo 补齐列表
 	#  元素列表
-	ELEMENTS = ["CANVAS",]
+	ELEMENTS = ['CANVAS',]
 	
 	## @var EVENTS
 	#  @todo 补齐列表
@@ -62,7 +63,9 @@ class JsGen(object):
 	
 	## @var INTERESTING_VALUES
 	#  特殊值列表
-	INTERESTING_VALUES = [0,]
+	INTERESTING_VALUES = [
+		TYPE.convert(0, TYPE.NUMBER),
+	]
 	
 	## @var MAX_ELEMENTS
 	#  添加元素数量随机mod
@@ -86,6 +89,37 @@ class JsGen(object):
 	def __init__(self, ids):
 		self.ids = ids
 		self.rand = utils.Rand()
+		
+	## 随机获取给定列表元素
+	#  @param items
+	def random_item(self, items):
+		return items[self.rand.rint(len(items))]
+		
+	## 创建元素并赋值变量
+	#  @param element_tag 元素tag名称
+	def setup_element(self, element_tag):
+		######TODO   需要分配id并添加到self.ids中  
+		return '
+		
+	## 随机创建元素
+	def random_create_element(self):
+		return self.create_element(self.random_item(self.ELEMENTS))
+		
+	## 创建元素
+	#  @param element_tag 元素tag名称
+	def create_element(self, element_tag):
+		return 'document.createElement("%s")' % element_tag
+
+	## 随机挑选元素添加随机子元素
+	def random_append_element(self):
+		return self.append_element(self.random_item(self.ids),
+			self.random_item(self.ids))
+	
+	## 添加子元素
+	#  @param parent 父元素变量名
+	#  @param child 子元素变量名
+	def append_element(self, parent, child):
+		return '%s.appendChild(%s);' % (parent, child)
 		
 	## 生成变量声明语句
 	#  @param name 变量名
@@ -151,4 +185,7 @@ if __name__ == '__main__':
 	print 'create_function("test_func", ["a","b","c"])\n%s\n\n' % JsGen.create_function('test_func', ['a','b','c'])
 	print 'create_function("test_func", statements=[declare("test", "test_str", TYPE.STRING), invoke_function("document", "createRange")])\n%s\n\n' % JsGen.create_function('test_func', statements=[JsGen.declare('test', 'test_str', TYPE.STRING), JsGen.invoke_function('document', 'createRange')])
 	print 'create_function("test_func", ["a","b","c"], [declare("test", "test_str", TYPE.STRING), invoke_function("document", "createRange")])\n%s\n\n' % JsGen.create_function('test_func', ['a', 'b', 'c'], [JsGen.declare('test', 'test_str', TYPE.STRING), JsGen.invoke_function('document', 'createRange')])
+	
+	jg = JsGen(['a', 'b'])
+	print 'random_append_element()\n%s\n\n' % jg.random_append_element()
 		
