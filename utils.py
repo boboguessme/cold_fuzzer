@@ -4,6 +4,18 @@ import random
 
 ## 随机实用类
 class Rand(object):
+
+	_CHARS = [
+		'A', 'B', 'C', 'D', 'E', 'F',
+		'G', 'H', 'I', 'J', 'K', 'L',
+		'M', 'N', 'O', 'P', 'Q', 'R',
+		'S', 'T', 'U', 'V', 'W', 'X', 
+		'Y', 'Z', 'a', 'b', 'c', 'd', 
+		'e', 'f', 'g', 'h', 'i', 'j', 
+		'k', 'l', 'm', 'n', 'o', 'p', 
+		'q', 'r', 's', 't', 'u', 'v', 
+		'w', 'x', 'y', 'z', '_',
+	]
 	
 	## 构造函数
 	#  @param seed 随机种子
@@ -25,8 +37,18 @@ class Rand(object):
 	def rbool(self):
 		return True if self.rint(2) == 1 else False
 		
+	## 生成指定长度随机字符串
+	#  @param str_len 字符串长度
+	#  @return 随机字符串
+	def rstr(self, str_len):
+		str_helper = []
+		while len(str_helper) < str_len:
+			str_helper.append(random.choice(self._CHARS))
+		return ''.join(str_helper)
+		
 if __name__ == '__main__':
 	rand = Rand()
 	print 'rint(10)\n%d\n\n' % rand.rint(10)
 	print 'rbool()\n%s\n\n' % rand.rbool()
+	print 'rstr(10)\n%s\n\n' % rand.rstr(10)
 	
