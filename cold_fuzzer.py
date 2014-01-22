@@ -7,15 +7,17 @@ from js import JsGen
 class PageHolder(object):
 
 	## 构造函数
+	#  @todo 还在纠结是不是要添加<!doctype html>
 	def __init__(self):
 		# html5头
-		self._page = '<!doctyle html>'
+		self._page = '<!doctype html>'
 		self._ids = []
 		self._tree = None
 		self._js = None
 		
 	## 构造元素树
 	#  @return element.Element 对象
+	#  @todo 未实现
 	def build_element_tree(self):
 		tree = Element('html')
 		

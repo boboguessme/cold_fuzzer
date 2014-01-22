@@ -17,6 +17,8 @@ class TYPE(object):
 	VARIABLE = 3
 	## JavaScript 函数显示形式
 	FUNCTION = 4
+	## 原始显示
+	RAW = 5
 	
 	## 构造函数
 	def __init__(self):
@@ -38,6 +40,8 @@ class TYPE(object):
 			return '"%s"' % value
 		elif type == TYPE.VARIABLE:
 			return value
+		elif type == TYPE.RAW:
+			return value
 		else:
 			return 'null'
 			
@@ -49,22 +53,73 @@ class JsGen(object):
 	## @var ELEMENTS
 	#  @todo 补齐列表
 	#  元素列表
-	ELEMENTS = ['CANVAS',]
+	ELEMENTS = [
+		'CANVAS', 'ARTICLE',
+	]
 	
 	## @var EVENTS
 	#  @todo 补齐列表
 	#  事件列表
-	EVENTS = ['select',]
+	EVENTS = [
+		'select', 
+		'focus', 
+		'click',
+	]
 	
 	## @var COMMANDS
-	# @todo 补齐列表
+	#  @todo 补齐列表
 	#  命令列表
-	COMMANDS = ['delete',]
+	COMMANDS = [
+		'delete', 'insertButton', 
+	]
+	
+	## @var PROPERTIES
+	#  @todo 补齐列表
+	#  属性列表
+	PROPERTIES = [
+		'offsetHeight',
+		'span',
+	]
+	
+	## @var BLACK_PROPERTIES
+	#  @todo 补齐列表
+	#  清空元素内容的属性
+	BLACK_PROPERTIES = [
+		'nodeName',
+		'nodeValue',
+		'nodeType',
+		'childNodes',
+		'location',
+		'name',
+		'opener',
+		'URL',
+		'onbeforeunload',
+		'onunload',
+		'innerHTML',
+		'outerHTML',
+		'innerText',
+		'textContent',
+		'Components',
+		'controllers',
+		'lastChild',
+		'previousSibling',
+		'previousElementSibling',
+		'parentNode',
+		'parentTextEdit',
+		'parentElement',
+		'ownerDocument',
+		'document' ,
+		'cloneNode',
+		'open',
+		'close',
+		'print',
+	]
 	
 	## @var INTERESTING_VALUES
 	#  特殊值列表
 	INTERESTING_VALUES = [
 		TYPE.convert(0, TYPE.NUMBER),
+		TYPE.convert('null', TYPE.NULL),
 	]
 	
 	## @var MAX_OPERATIONS
@@ -93,6 +148,7 @@ class JsGen(object):
 	def __init__(self, ids):
 		self.ids = ids
 		self.rand = utils.Rand()
+		self.global_vars = self.init_vars()
 		
 	## 初始化分配html元素变量引用
 	#  @return 声明已存在元素的js代码序列
@@ -104,56 +160,92 @@ class JsGen(object):
 						id,
 						self.invoke_function(
 							'document', 'getElementById', [[id,TYPE.STRING]]),
-						TYPE.VARIABLE))
+						TYPE.RAW))
 		return js_content
 		
 	## fuzz策略生成
 	#  @return fuzz操作js代码
 	#  @remark 起点函数是cold_start
-	def fuzz(self):
-		js_content = []		
-		js_content.extend(self.init_vars())
-		operation_counts = self.rand.rint(self.MAX_OPERATIONS)
-		for current_operation_count in xrange(operation_counts):
-			js_content.append(self.random_operate())
-		cold_start = self.create_function('cold_start', [], js_content)
+	def fuzz(self):	
+		js_content = []
+		cold_start = self.create_function(
+				'cold_start', [], self.random_js_contents())
+		js_content.append(cold_start)
 		timer_code = self.set_timer()
-		return '\n'.join((cold_start, timer_code));
+		js_content.append(timer_code)
+		return '\n\n'.join(self.global_vars + js_content);
 	
 	## 创建setTimeout
 	#  @return 相应js代码
 	#  @attention 包含相关函数定义
 	def set_timer(self):
-		js_content = []
-		callback_func = self.create_function('timer_handler', [], js_content)
+		js_content = self.random_js_contents(True)
+		callback_func = self.create_function(
+				'timer_handler', [], js_content)
 		return self.invoke_function('window', 'setTimeout', 
-				[[callback_func,TYPE.VARIABLE], [10,TYPE.NUMBER]])
+				[[callback_func,TYPE.RAW], [2000,TYPE.NUMBER]])
+				
+	## 创建随机js代码序列
+	#  @param is_timer True在setTimeout内调用
+	#  @return js代码序列
+	def random_js_contents(self, is_timer=False):
+		js_content = []
+		operation_counts = self.rand.rint(self.MAX_OPERATIONS)
+		for current_operation_count in xrange(operation_counts):
+			js_content.append(self.random_operate(is_timer))
+		return map(self.wrapper, js_content)
+		
+	## 创建事件响应js代码序列
+	#  @return js代码序列
+	#  @todo 未实现
+	def random_event_contents(self):
+		js_content = []
+		js_content.append('alert("hahau!!");')
+		return js_content
 	
 	## 随机操作
+	#  @param is_timer True在setTimeout内调用
 	#  @return 随机操作的js代码
-	def random_operate(self):
+	def random_operate(self, is_timer=False):
 		type_mod = 4
 		type = self.rand.rint(type_mod)
 		# 事件操作
 		if type == 0:
-			return self.random_event_operate()
+			return self.random_event_operate(is_timer)
 		# 样式操作
 		elif type == 1:
 			return self.random_style_operate()
 		# 元素操作
 		elif type == 2:
-			return self.random_element_operate()
+			return self.random_element_operate(is_timer)
 		# 全局操作
 		else:
 			return self.random_global_operate()
 			
 	## 随机事件操作
+	#  @param is_timer True在setTimeout内调用
 	#  @return 相应js代码
+	#  @todo 貌似还需要生成触发事件的代码
+	#  @todo 还没有对事件的初始化进行处理，如果处理，需要修改self.EVENTS结构，对每一类事件类型有不同的初始化方式
 	#  @attention 包含相关函数定义
-	def random_event_operate(self):
-		####### TODO  干活
-		#return self.invoke_function('window', 'alert', {'event':TYPE.STRING})
-		return '// event\n'
+	#  @attention IE6-IE9 需要使用attachEvent而不是addEventListener
+	#  @attention 现在事件对象是默认初始化
+	#  @remark 参考https://developer.mozilla.org/en-US/docs/Web/Reference/Events?redirectlocale=en-US&redirectslug=DOM%2FMozilla_event_reference
+	def random_event_operate(self, is_timer=False):
+		target = self.random_item(self.ids)
+		event = self.random_item(self.EVENTS)
+		if is_timer:
+			return self.invoke_function(
+					target, 
+					'dispatchEvent',
+					[['new Event("%s")' % event, TYPE.RAW]])
+		else:
+			return self.invoke_function(target, 'addEventListener', 
+					[[event, TYPE.STRING],
+					[self.create_function(target, ['event'], 
+						self.random_event_contents()), TYPE.RAW],
+					[self.rand.rbool(), TYPE.VARIABLE]
+					])
 		
 	## 随机样式操作
 	#  @return 相应js代码
@@ -163,9 +255,10 @@ class JsGen(object):
 		return '// style\n'
 		
 	## 随机元素操作
+	#  @param enable_clean_property 允许清空元素的操作
 	#  @return 相应js代码
-	def random_element_operate(self):
-		type_mod = 4
+	def random_element_operate(self, enable_clean_property=False):
+		type_mod = 6
 		type = self.rand.rint(type_mod)
 		# 增加元素，并随机添加到tree中
 		if type == 0:
@@ -184,22 +277,33 @@ class JsGen(object):
 			# 现在只用了removeChild
 			current_element = self.random_item(self.ids)
 			return self.invoke_function(
-				'.'.join((current_element, 'parentNode')),
-				'removeChild', [[current_element,TYPE.VARIABLE]])
+					'.'.join((current_element, 'parentNode')),
+					'removeChild', [[current_element,TYPE.VARIABLE]])
 		# 清空元素内容
 		elif type == 2:
-			# @todo 随机是innerHTML等啥乱七八糟置为null
-			# @todo 这个需要补充到setTimeout里面
+			if not enable_clean_property:
+				# 极端条件下貌似会死循环，可以买彩票了吧？
+				return self.random_element_operate(enable_clean_property)
 			return self.assign(
-				'.'.join((self.random_item(self.ids), 'innerHTML')),
-				'null', TYPE.NULL)		
-		# 引用元素
+					'.'.join((self.random_item(self.ids), self.random_item(self.BLACK_PROPERTIES))),
+					'null', TYPE.NULL)		
+		# 元素相互引用
 		# 随机选取元素添加到另一随意元素
-		else:
+		elif type == 3:
 			child_element = self.random_item(self.ids)
 			parent_element = self.random_item(self.ids)
 			return self.invoke_function(
-				parent_element, 'appendChild', [[child_element,TYPE.VARIABLE]])
+					parent_element, 'appendChild', [[child_element,TYPE.VARIABLE]])
+		#  赋值元素属性
+		elif type == 4:
+			current_element = self.random_item(self.ids)
+			return self.assign(
+					'.'.join((current_element, self.random_item(self.PROPERTIES))), 
+					self.random_item(self.INTERESTING_VALUES), TYPE.RAW)
+		# 引用属性
+		else:
+			return self.ref('.'.join((self.random_item(self.ids), 
+						self.random_item(self.PROPERTIES))))
 		
 	## 随机全局操作
 	#  @return 相应js代码
@@ -216,7 +320,8 @@ class JsGen(object):
 	def setup_element(self, element_tag, id_len=10):
 		element_id = self.rand.rstr(id_len)
 		self.ids.append(element_id)
-		return 'var %s = %s;%s' % (element_id, 
+		self.global_vars.append('var %s;' % element_id)
+		return '%s = %s;%s' % (element_id, 
 					self.create_element(element_tag),
 					self.set_element_id(element_id))
 		
@@ -235,7 +340,7 @@ class JsGen(object):
 	#  @return 相应js代码
 	def random_append_element(self):
 		return self.append_element(self.random_item(self.ids),
-			self.random_item(self.ids))
+				self.random_item(self.ids))
 	
 	## 添加子元素
 	#  @param parent 父元素变量名
@@ -281,6 +386,13 @@ class JsGen(object):
 	def assign(lvalue, rvalue, type):
 		return '%s = %s;' % (lvalue, TYPE.convert(rvalue, type))
 		
+	## 生成引用变量语句
+	#  @param var 变量
+	#  @return 引用变量语句
+	@staticmethod
+	def ref(var):
+		return '%s;' % var
+		
 	## 生成函数调用语句
 	#  @param invoker 函数所属对象 
 	#  @param function 函数名
@@ -306,6 +418,13 @@ class JsGen(object):
 	def create_function(name, arg_names=[], statements=[]):
 		return 'function %s(%s){%s}' % \
 			(name, ', '.join(arg_names), ''.join(statements))
+			
+	## try/catch包装语句
+	#  @param statement js语句
+	#  @return 包装语句
+	@staticmethod
+	def wrapper(statement):
+		return 'try{%s}catch(exception){};' % statement
 		
 if __name__ == '__main__':
 	print 'declare has tested assign'

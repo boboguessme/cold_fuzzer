@@ -33,9 +33,9 @@ class Rand(object):
 	
 	## 生成随机布尔值
 	#  @return 随机布尔值
-	#  @attention 返回值是python布尔形式
+	#  @attention 返回值是字符串形式
 	def rbool(self):
-		return True if self.rint(2) == 1 else False
+		return 'true' if self.rint(2) == 1 else 'false'
 		
 	## 生成指定长度随机字符串
 	#  @param str_len 字符串长度
@@ -45,6 +45,13 @@ class Rand(object):
 		while len(str_helper) < str_len:
 			str_helper.append(random.choice(self._CHARS))
 		return ''.join(str_helper)
+		
+	## 混杂两个列表
+	#  @param seq1
+	#  @param seq2
+	#  @return 混杂合并的列表
+	def rmix(self, seq1, seq2):
+		return random.sample(seq1+seq2, len(seq1)+len(seq2))
 		
 if __name__ == '__main__':
 	rand = Rand()
