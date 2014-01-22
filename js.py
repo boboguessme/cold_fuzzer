@@ -225,7 +225,6 @@ class JsGen(object):
 	## 随机事件操作
 	#  @param is_timer True在setTimeout内调用
 	#  @return 相应js代码
-	#  @todo 貌似还需要生成触发事件的代码
 	#  @todo 还没有对事件的初始化进行处理，如果处理，需要修改self.EVENTS结构，对每一类事件类型有不同的初始化方式
 	#  @attention 包含相关函数定义
 	#  @attention IE6-IE9 需要使用attachEvent而不是addEventListener
