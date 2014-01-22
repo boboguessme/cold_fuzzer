@@ -103,7 +103,7 @@ class JsGen(object):
 			js_content.append(self.declare(
 						id,
 						self.invoke_function(
-							'document', 'getElementById', {id:TYPE.STRING}),
+							'document', 'getElementById', [[id,TYPE.STRING]]),
 						TYPE.VARIABLE))
 		return js_content
 		
@@ -117,7 +117,17 @@ class JsGen(object):
 		for current_operation_count in xrange(operation_counts):
 			js_content.append(self.random_operate())
 		cold_start = self.create_function('cold_start', [], js_content)
-		return cold_start
+		timer_code = self.set_timer()
+		return '\n'.join((cold_start, timer_code));
+	
+	## 创建setTimeout
+	#  @return 相应js代码
+	#  @attention 包含相关函数定义
+	def set_timer(self):
+		js_content = []
+		callback_func = self.create_function('timer_handler', [], js_content)
+		return self.invoke_function('window', 'setTimeout', 
+				[[callback_func,TYPE.VARIABLE], [10,TYPE.NUMBER]])
 	
 	## 随机操作
 	#  @return 随机操作的js代码
@@ -142,13 +152,15 @@ class JsGen(object):
 	#  @attention 包含相关函数定义
 	def random_event_operate(self):
 		####### TODO  干活
-		return self.invoke_function('window', 'alert', {'event':TYPE.STRING})
+		#return self.invoke_function('window', 'alert', {'event':TYPE.STRING})
+		return '// event\n'
 		
 	## 随机样式操作
 	#  @return 相应js代码
 	def random_style_operate(self):
 		####### TODO  干活
-		return self.invoke_function('window', 'alert', {'style':TYPE.STRING})
+		#return self.invoke_function('window', 'alert', {'style':TYPE.STRING})
+		return '// style\n'
 		
 	## 随机元素操作
 	#  @return 相应js代码
@@ -164,19 +176,20 @@ class JsGen(object):
 			js_content.append(self.invoke_function(
 					self.random_item(self.ids),
 					'appendChild',
-					{element_id:TYPE.VARIABLE}))
+					[[element_id,TYPE.VARIABLE]]))
 			return ''.join(js_content)		
 		# 删除元素
 		elif type == 1:
-			# TODO removeNode貌似只有IE支持，以后考虑考虑
+			# @todo removeNode貌似只有IE支持，以后考虑考虑
 			# 现在只用了removeChild
 			current_element = self.random_item(self.ids)
 			return self.invoke_function(
 				'.'.join((current_element, 'parentNode')),
-				'removeChild', {current_element:TYPE.VARIABLE})
+				'removeChild', [[current_element,TYPE.VARIABLE]])
 		# 清空元素内容
 		elif type == 2:
-			# TODO 随机是innerHTML等啥乱七八糟置为null
+			# @todo 随机是innerHTML等啥乱七八糟置为null
+			# @todo 这个需要补充到setTimeout里面
 			return self.assign(
 				'.'.join((self.random_item(self.ids), 'innerHTML')),
 				'null', TYPE.NULL)		
@@ -186,18 +199,20 @@ class JsGen(object):
 			child_element = self.random_item(self.ids)
 			parent_element = self.random_item(self.ids)
 			return self.invoke_function(
-				parent_element, 'appendChild', {child_element:TYPE.VARIABLE})
+				parent_element, 'appendChild', [[child_element,TYPE.VARIABLE]])
 		
 	## 随机全局操作
 	#  @return 相应js代码
 	def random_global_operate(self):
 		####### TODO  干活
-		return self.invoke_function('window', 'alert', {'global':TYPE.STRING})
+		#return self.invoke_function('window', 'alert', {'global':TYPE.STRING})
+		return '// global\n'
 		
 	## 创建元素，赋值变量并且设置元素id为对应变量名
 	#  @param element_tag 元素tag名称
 	#  @param id_len id长度，默认10
 	#  @return 相应js代码
+	#  @todo  这种方式fuzz不出来same id那种漏洞
 	def setup_element(self, element_tag, id_len=10):
 		element_id = self.rand.rstr(id_len)
 		self.ids.append(element_id)
@@ -269,14 +284,14 @@ class JsGen(object):
 	## 生成函数调用语句
 	#  @param invoker 函数所属对象 
 	#  @param function 函数名
-	#  @param args 函数参数 {参数值:js.TYPE 支持类型}
+	#  @param args 函数参数 [[参数值,js.TYPE 支持类型], ...]
 	#  @return 函数调用语句
 	#  @remark 代码已经添加';'
 	#  @attention invoker不可为空，比如alert应以window.alert形式调用
 	@staticmethod
-	def invoke_function(invoker, function, args={}):
+	def invoke_function(invoker, function, args=[]):
 		args_helper = []
-		for value, type in args.items():
+		for value, type in args:
 			args_helper.append(TYPE.convert(value, type))
 		args_str = ', '.join(args_helper)
 		
@@ -300,8 +315,8 @@ if __name__ == '__main__':
 	print 'declare("test", "test_str", TYPE.STRING)\n%s\n\n' % JsGen.declare('test', 'test_str', TYPE.STRING)
 	print 'declare("test", "test", TYPE.VARIABLE)\n%s\n\n' % JsGen.declare('test', 'test', TYPE.VARIABLE)
 	print 'invoke_function("document", "createRange")\n%s\n\n' % JsGen.invoke_function('document', 'createRange')
-	print 'invoke_function("window", "alert", {"hello world!" : TYPE.STRING})\n%s\n\n' % JsGen.invoke_function('window', 'alert', {'hello world!' : TYPE.STRING})
-	print 'invoke_function("div_s", "setAttribute", {"test_attr":TYPE.STRING, "test_value":TYPE.STRING})\n%s\n\n' % JsGen.invoke_function('div_s', 'setAttribute', {'test_attr':TYPE.STRING, 'test_value':TYPE.STRING})
+	print 'invoke_function("window", "alert", [["hello world!" , TYPE.STRING]])\n%s\n\n' % JsGen.invoke_function('window', 'alert', [['hello world!', TYPE.STRING]])
+	print 'invoke_function("div_s", "setAttribute", [["test_attr",TYPE.STRING, "test_value",TYPE.STRING]])\n%s\n\n' % JsGen.invoke_function('div_s', 'setAttribute', [['test_attr',TYPE.STRING, 'test_value', TYPE.STRING]])
 	print 'create_function("test_func")\n%s\n\n' % JsGen.create_function('test_func')
 	print 'create_function("test_func", ["a","b","c"])\n%s\n\n' % JsGen.create_function('test_func', ['a','b','c'])
 	print 'create_function("test_func", statements=[declare("test", "test_str", TYPE.STRING), invoke_function("document", "createRange")])\n%s\n\n' % JsGen.create_function('test_func', statements=[JsGen.declare('test', 'test_str', TYPE.STRING), JsGen.invoke_function('document', 'createRange')])
