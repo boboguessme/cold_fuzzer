@@ -10,6 +10,7 @@ class Element(object):
 	## 构造函数
 	#  @param element_tag tag.Tag 对象
 	def __init__(self, element_tag):
+		self._tag_name = element_tag
 		self._tag = Tag(element_tag)
 		self._attributes = {}
 		self._text = ''
@@ -32,6 +33,12 @@ class Element(object):
 	def append_child(self, element):
 		self._sub_elements.append(element)
 		
+	## 插入子元素
+	#  @param position 插入的位置
+	#  @param element element.Element 对象
+	def insert_child(self, position, element):
+		self._sub_elements.insert(position, element)
+		
 	## 生成元素打开内容
 	#  @return 元素打开代码
 	def _open(self):
@@ -40,7 +47,10 @@ class Element(object):
 	## 生成元素闭合内容
 	#  @param do 为0返回空字符串 默认不为0
 	#  @return 元素闭合代码
+	#  @remark script标签必须闭合
 	def _close(self, do=1):
+		if self._tag_name == 'script':
+			do = 1
 		if not do:
 			return ''
 		return self._tag.close()
