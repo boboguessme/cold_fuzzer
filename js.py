@@ -230,16 +230,53 @@ class JsGen(object):
 	
 	## @var EVENTS
 	#  事件列表
-	#  @todo 补齐列表
+	#  @remark 收集完整IE事件
 	EVENTS = [
-		'select', 
-		'focus', 
-		'click',
+		"compositionend",
+		"compositionstart",
+		"compositionupdate",
+		"drag",
+		"dragend",
+		"dragenter",
+		"dragleave",
+		"dragover",
+		"dragstart",
+		"drop",
+		"blur",
+		"focus",
+		"focusin",
+		"focusout",
+		"keydown",
+		"keypress",
+		"keyup",
+		"message",
+		"click",
+		"dblclick",
+		"mousedown",
+		"mousemove",
+		"mouseout",
+		"mouseover",
+		"mouseup",
+		"mousewheel",
+		"DOMSubtreeModified",
+		"DOMNodeInserted",
+		"DOMNodeRemoved",
+		"DOMAttrModified",
+		"DOMCharacterDataModified",
+		"storage",
+		"SVGZoom",
+		"textInput",
+		"abort",
+		"error",
+		"load",
+		"select",
+		"resize",
 	]
 	
 	## @var COMMANDS
 	#  命令列表
 	#  @todo 补齐列表
+	#  未使用
 	COMMANDS = [
 		'delete', 'insertButton', 
 	]
@@ -627,17 +664,17 @@ class JsGen(object):
 	
 	## @var MAX_ELEMENTS
 	#  添加元素数量随机mod
-	#  @remark 未使用
+	#  @todo 未使用
 	MAX_ELEMENTS = 20
 	
 	## @var MAX_PROPERTY
 	#  添加属性数量随机mod
-	#  @remark 未使用	
+	#  @todo 未使用	
 	MAX_PROPERTY = 9
 	
 	## @var MAX_LISTENERS
 	#  添加事件数量随机mod
-	#  @remark 未使用	
+	#  @todo 未使用	
 	MAX_LISTENERS = 5
 	
 	## @var ids
