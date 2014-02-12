@@ -6,11 +6,18 @@ from utils import Rand
 ## 产生元素树页面代码
 #  @attention 元素包含的子元素按照添加顺序排列
 class Element(object):
+
+	## @var CLOSED_ELEMENTS
+	#  必须闭合的元素
+	CLOSED_ELEMENTS = [
+		'html',
+		'script',
+	]
 	
 	## 构造函数
 	#  @param element_tag tag.Tag 对象
 	def __init__(self, element_tag):
-		self._tag_name = element_tag
+		self._tag_name = element_tag.lower()
 		self._tag = Tag(element_tag)
 		self._attributes = {}
 		self._text = ''
@@ -47,9 +54,9 @@ class Element(object):
 	## 生成元素闭合内容
 	#  @param do 为0返回空字符串 默认不为0
 	#  @return 元素闭合代码
-	#  @remark script标签必须闭合
 	def _close(self, do=1):
-		if self._tag_name == 'script':
+		# 某些元素必须闭合
+		if self._tag_name in self.CLOSED_ELEMENTS:
 			do = 1
 		if not do:
 			return ''
