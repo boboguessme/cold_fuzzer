@@ -53,6 +53,7 @@ class TYPE(object):
 #  @remark 部字段是name, args, statements，然后在最后生成函数代码；另
 #  @remark 外还有全局代码序列等等
 #  @remark 不过目前没有这种方式的需求
+#  @todo 需要相关配置文件，适应多种浏览器、不同版本的变化
 #  @todo 很多DOM方法并没有应用，比如所列在http://msdn.microsoft.com/en-us/library/ie/hh773165%28v=vs.85%29.aspx
 #  @todo 所以cloneNode等类型漏洞没有办法跑出来
 class JsGen(object):
@@ -202,7 +203,7 @@ class JsGen(object):
 		"noFrames",
 		"noShade",
 		"noWrap",
-		"plainText",
+		#"plainText", 会把代码变成文本
 		"rev",
 		"rules",
 		"scheme",

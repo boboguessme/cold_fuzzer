@@ -4,6 +4,7 @@ from element import Element
 from js import JsGen
 
 ## 代表整个生成页面代码
+#  @todo 增加style标签
 class PageHolder(object):
 
 	## @var MAX_INIT_ELEMENTS
@@ -11,7 +12,7 @@ class PageHolder(object):
 	MAX_INIT_ELEMENTS = 8
 
 	## 构造函数
-	#  @todo 还在纠结是不是要添加<!doctype html>
+	#  @todo 还在纠结是不是要添加<!doctype html>  fuzz SVG可能就不能增加
 	def __init__(self):
 		# html5头
 		self._page = '<!doctype html>'
@@ -24,7 +25,6 @@ class PageHolder(object):
 	#  @todo 随机初始化元素style或者其他属性
 	def build_element_tree(self, id_len=10):
 		root = Element('html')
-		self._elements.append(root)
 		body = Element('body')
 		body.set_attribute('id', 'body')
 		body.set_attribute('onload', 'cold_start()')
