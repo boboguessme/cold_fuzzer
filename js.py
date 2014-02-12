@@ -442,7 +442,7 @@ class JsGen(object):
 		"method",
 		"Methods",
 		"min",
-		"x-ms-AcceleratorKey",
+		# "x-ms-AcceleratorKey",  js语法错误 需要改用setAttribute
 		"msCapsLockWarningOff",
 		"multiple",
 		"naturalHeight",
@@ -546,7 +546,7 @@ class JsGen(object):
 		"width",
 		"willValidate",
 		"wrap",
-		"x-ms-format-detection",
+		#"x-ms-format-detection",  js语法错误 需要改用setAttribute
 	]
 	
 	## @var BLACK_PROPERTIES
