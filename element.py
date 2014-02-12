@@ -12,6 +12,7 @@ class Element(object):
 	CLOSED_ELEMENTS = [
 		'html',
 		'script',
+		'iframe',
 	]
 	
 	## 构造函数
