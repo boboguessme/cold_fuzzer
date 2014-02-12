@@ -256,10 +256,12 @@ class JsGen(object):
 	#  @attention 包含相关函数定义
 	def set_timer(self):
 		js_content = self.random_js_contents(True)
+		# 自刷新进行fuzz
+		js_content.append('window.location.reload();')
 		callback_func = self.create_function(
 				'timer_handler', [], js_content)
 		return self.invoke_function('window', 'setTimeout', 
-				[[callback_func,TYPE.RAW], [2000,TYPE.NUMBER]])
+				[[callback_func,TYPE.RAW], [100,TYPE.NUMBER]])
 				
 	## 创建随机js代码序列
 	#  @param is_timer True在setTimeout内调用
