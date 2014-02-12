@@ -53,18 +53,184 @@ class TYPE(object):
 #  @remark 部字段是name, args, statements，然后在最后生成函数代码；另
 #  @remark 外还有全局代码序列等等
 #  @remark 不过目前没有这种方式的需求
+#  @todo 很多DOM方法并没有应用，比如所列在http://msdn.microsoft.com/en-us/library/ie/hh773165%28v=vs.85%29.aspx
+#  @todo 所以cloneNode等类型漏洞没有办法跑出来
 class JsGen(object):
 	
 	## @var ELEMENTS
-	#  @todo 补齐列表
 	#  元素列表
+	#  @remark 收集完整IE元素
 	ELEMENTS = [
-		'CANVAS', 'ARTICLE',
+		"a",
+		"abbr",
+		"address",
+		"area",
+		"article",
+		"aside",
+		"audio",
+		"b",
+		"base",
+		"bdo",
+		"blockQuote",
+		"body",
+		"br",
+		"button",
+		"caption",
+		"cite",
+		"code",
+		"col",
+		"colGroup",
+		"comment",
+		"custom",
+		"datalist",
+		"dd",
+		"del",
+		"dfn",
+		"div",
+		"dl",
+		"dt",
+		"em",
+		"embed",
+		"fieldSet",
+		"figcaption",
+		"figure",
+		"footer",
+		"form",
+		"head",
+		"header",
+		"hgroup",
+		"hn",
+		"hr",
+		"html",
+		#"HTML Comment",
+		"i",
+		"iframe",
+		"img",
+		"input",
+		"ins",
+		"kbd",
+		"label",
+		"legend",
+		"li",
+		"link",
+		"map",
+		"mark",
+		"media",
+		"menu",
+		"meta",
+		"nav",
+		"noScript",
+		"object",
+		"ol",
+		"optGroup",
+		"option",
+		"p",
+		"param",
+		"pre",
+		"progress",
+		"q",
+		"rt",
+		"ruby",
+		"s",
+		"samp",
+		#"script",
+		"section",
+		"select",
+		"small",
+		"source",
+		"span",
+		"strong",
+		"style",
+		"sub",
+		"sup",
+		"table",
+		"tBody",
+		"td",
+		"textArea",
+		"tFoot",
+		"th",
+		"tHead",
+		"title",
+		"tr",
+		"track",
+		"u",
+		"ul",
+		"var",
+		"video",
+		"xml",
+		### IE反对使用的元素开始
+		"acronym",
+		"wbr",
+		"align",
+		"aLink",
+		"applet",
+		"axis",
+		"background",
+		"baseFont",
+		"bgColor",
+		"bgSound",
+		"big",
+		"cellPadding",
+		"cellSpacing",
+		"center",
+		"classid",
+		"code",
+		"codeBase",
+		"codeType",
+		"compact",
+		"declare",
+		"dir",
+		"event",
+		"face",
+		"fgColor",
+		"font",
+		"frame",
+		"frameBorder",
+		"frameSet",
+		"hspace",
+		"HTMLFrameElement",
+		"HTMLNextIdElement",
+		"isIndex",
+		"language",
+		"link",
+		"listing",
+		"marginHeight",
+		"marginWidth",
+		"marquee",
+		"nextID",
+		"noBR",
+		"noFrames",
+		"noShade",
+		"noWrap",
+		"plainText",
+		"rev",
+		"rules",
+		"scheme",
+		"scope",
+		"scrolling",
+		"size",
+		"standby",
+		"start",
+		"strike",
+		"summary",
+		"text",
+		"tt",
+		"type",
+		"vAlign",
+		"value",
+		"valueType",
+		"version",
+		"vLink",
+		"vrml",
+		"vspace",
+		"width",
+		"xmp",
+		### IE反对元素结束
 	]
 	
 	## @var EVENTS
-	#  @todo 补齐列表
 	#  事件列表
+	#  @todo 补齐列表
 	EVENTS = [
 		'select', 
 		'focus', 
@@ -72,23 +238,282 @@ class JsGen(object):
 	]
 	
 	## @var COMMANDS
-	#  @todo 补齐列表
 	#  命令列表
+	#  @todo 补齐列表
 	COMMANDS = [
 		'delete', 'insertButton', 
 	]
 	
 	## @var PROPERTIES
-	#  @todo 补齐列表
 	#  属性列表
+	#  @remark 收集完整IE属性
 	PROPERTIES = [
-		'offsetHeight',
-		'span',
+		"abbr",
+		"accept",
+		"acceptCharset",
+		"accessKey",
+		"action",
+		"activeElement",
+		"ActiveXObject",
+		"alinkColor",
+		"all",
+		"allowfullscreen",
+		"allowTransparency",
+		"alt",
+		"altHtml",
+		"anchorNode",
+		"anchorOffset",
+		"anchors",
+		"applets",
+		"applicationName",
+		"archive",
+		"async",
+		"ATOMICSELECTION",
+		"attributes",
+		"autocomplete",
+		"autofocus",
+		"background",
+		"balance",
+		"BaseHref",
+		"BGCOLOR",
+		"bgProperties",
+		"body",
+		"border",
+		"borderColor",
+		"borderColorDark",
+		"borderColorLight",
+		"bottom",
+		"bottomMargin",
+		"boundElements",
+		"browserLanguage",
+		"canHaveChildren",
+		"canHaveHTML",
+		"caption",
+		"cellIndex",
+		"cells",
+		"ch",
+		"characterSet",
+		"charset",
+		"checked",
+		"children",
+		"chOff",
+		"cite",
+		"class",
+		"classList",
+		"className",
+		"clear",
+		"clientHeight",
+		"clientLeft",
+		"clientTop",
+		"clientWidth",
+		"color",
+		"cols",
+		"colSpan",
+		"compatible",
+		"compatMode",
+		"complete",
+		"content",
+		"contentDocument",
+		"contentEditable",
+		"contentWindow",
+		"controlRange",
+		"cookie",
+		"coords",
+		"Count",
+		"customError",
+		"data",
+		"dataFld",
+		"dataFormatAs",
+		"dataPageSize",
+		"dataSrc",
+		"dateTime",
+		"defaultCharset",
+		"defaultChecked",
+		"defaultSelected",
+		"defaultValue",
+		"defaultView",
+		"defer",
+		"designMode",
+		"dir",
+		"disabled",
+		"doctype",
+		"documentElement",
+		"documentMode",
+		"domain",
+		"draggable",
+		"dropEffect",
+		"effectAllowed",
+		"elements",
+		"embeds",
+		"encoding",
+		"enctype",
+		"fgColor",
+		"FieldDelim",
+		"fileCreatedDate",
+		"fileModifiedDate",
+		"files",
+		"fileSize",
+		"fileUpdatedDate",
+		"focusNode",
+		"focusOffset",
+		"form",
+		"formAction",
+		"formEnctype",
+		"formMethod",
+		"formNoValidate",
+		"forms",
+		"formTarget",
+		"frameElement",
+		"frames",
+		"frameSpacing",
+		"head",
+		"headers",
+		"height",
+		"hidden",
+		"hideFocus",
+		"href",
+		"hreflang",
+		"htmlFor",
+		"httpEquiv",
+		"id",
+		"images",
+		"implementation",
+		"indeterminate",
+		"index",
+		"isCollapsed",
+		"isContentEditable",
+		"isDisabled",
+		"isMap",
+		"isMultiLine",
+		"isOpen",
+		"label",
+		"lazyload",
+		"lang",
+		"lastModified",
+		"leftMargin",
+		"length",
+		"linkColor",
+		"links",
+		"list",
+		"longDesc",
+		"loop",
+		"lowsrc",
+		"max",
+		"maxConnectionsPerServer",
+		"maxLength",
+		"method",
+		"Methods",
+		"min",
+		"x-ms-AcceleratorKey",
+		"msCapsLockWarningOff",
+		"multiple",
+		"naturalHeight",
+		"naturalWidth",
+		"noHref",
+		"noResize",
+		"noValidate",
+		"object",
+		"offscreenBuffering",
+		"offsetHeight",
+		"offsetLeft",
+		"offsetParent",
+		"offsetTop",
+		"offsetWidth",
+		"onLine",
+		"options",
+		"palette",
+		"parentWindow",
+		"pathname",
+		"pattern",
+		"patternMismatch",
+		"placeholder",
+		"pluginspage",
+		"position",
+		"rangeCount",
+		"rangeOverflow",
+		"rangeUnderflow",
+		"readOnly",
+		"readyState",
+		"referrer",
+		"rel",
+		"required",
+		"rightMargin",
+		"role",
+		"rowIndex",
+		"rows",
+		"rowSpan",
+		"sandbox",
+		"screenLeft",
+		"screenTop",
+		"scripts",
+		"scroll",
+		"scrollHeight",
+		"scrollLeft",
+		"scrollTop",
+		"scrollWidth",
+		"sectionRowIndex",
+		"SECURITY",
+		"selected",
+		"selectedIndex",
+		"selectionEnd",
+		"selectionStart",
+		"self",
+		"shape",
+		"size",
+		"sourceIndex",
+		"span",
+		"specified",
+		"spellcheck",
+		"src",
+		"start",
+		"status",
+		"step",
+		"stepMismatch",
+		"style",
+		"tabIndex",
+		"tabStop",
+		"tagName",
+		"tagUrn",
+		"target",
+		"tBodies",
+		"text",
+		"tFoot",
+		"tHead",
+		"title",
+		"tooLong",
+		"top",
+		"topMargin",
+		"type",
+		"typeMismatch",
+		"uniqueID",
+		"uniqueNumber",
+		"units",
+		"URLUnencoded",
+		"urn",
+		"useMap",
+		"userAgent",
+		"valid",
+		"validationMessage",
+		"validity",
+		"vAlign",
+		"value",
+		"valueAsNumber",
+		"valueMissing",
+		"vcard_name",
+		"version",
+		"viewLink",
+		"viewMasterTab",
+		"vlinkColor",
+		"volume",
+		"width",
+		"willValidate",
+		"wrap",
+		"x-ms-format-detection",
 	]
 	
 	## @var BLACK_PROPERTIES
+	#  清空元素内容的属性列表
 	#  @todo 补齐列表
-	#  清空元素内容的属性
 	BLACK_PROPERTIES = [
 		'nodeName',
 		'nodeValue',
@@ -103,6 +528,7 @@ class JsGen(object):
 		'innerHTML',
 		'outerHTML',
 		'innerText',
+		"outerText",
 		'textContent',
 		'Components',
 		'controllers',
@@ -117,13 +543,13 @@ class JsGen(object):
 		'cloneNode',
 		'open',
 		'close',
-		'print',
+		'print',	
 	]
 	
 	## @var STYLES
-	#  @remark 这是一个字典
-	#  @todo 补齐列表
 	#  样式属性
+	#  @remark 这是一个字典
+	#  @todo 补齐列表	
 	STYLES = {
 		'backgroundAttachment' : ['fixed','scroll'],
 		'backgroundColor' : ['#b0c4de','none'],
@@ -200,18 +626,18 @@ class JsGen(object):
 	MAX_OPERATIONS = 50
 	
 	## @var MAX_ELEMENTS
-	#  @remark 未使用
 	#  添加元素数量随机mod
+	#  @remark 未使用
 	MAX_ELEMENTS = 20
 	
 	## @var MAX_PROPERTY
-	#  @remark 未使用
 	#  添加属性数量随机mod
+	#  @remark 未使用	
 	MAX_PROPERTY = 9
 	
 	## @var MAX_LISTENERS
-	#  @remark 未使用
 	#  添加事件数量随机mod
+	#  @remark 未使用	
 	MAX_LISTENERS = 5
 	
 	## @var ids
@@ -274,7 +700,7 @@ class JsGen(object):
 		operation_counts = self.rand.rint(self.MAX_OPERATIONS)
 		for current_operation_count in xrange(operation_counts):
 			js_content.append(self.random_operate(is_timer, is_event))
-		return map(self.wrapper, js_content)
+		return js_content
 		
 	## 创建事件响应js代码序列
 	#  @return js代码序列
@@ -303,6 +729,41 @@ class JsGen(object):
 		# 全局操作
 		else:
 			return self.random_global_operate()
+		
+	## 生成触发事件的js代码
+	#  @param target 事件发生宿主
+	#  @param event_type 事件类型
+	#  @return js代码
+	def fire_event(self, target, event_type):
+		""" 非IE以外的浏览器支持
+		return self.invoke_function(
+					target, 
+					'dispatchEvent',
+					[['new Event("%s")' % event_type, TYPE.RAW]])
+		"""		
+		js_content = []
+		# @attention 事件名统一是e
+		evt_var_name = 'e'
+		js_content.append(self.declare(
+				evt_var_name, 
+				self.invoke_function(
+					'document', 
+					'createEvent', 
+					[['Event', TYPE.STRING]]),
+				TYPE.RAW))
+		js_content.append(self.invoke_function(
+				evt_var_name,
+				'initEvent',
+				[[event_type, TYPE.STRING], 
+				 [self.rand.rbool(), TYPE.VARIABLE],
+				 [self.rand.rbool(), TYPE.VARIABLE]
+				]))
+		js_content.append(self.invoke_function(
+				target,
+				'dispatchEvent',
+				[[evt_var_name, TYPE.VARIABLE]]))
+		return self.generate_js_code(js_content)
+				
 			
 	## 随机事件操作
 	#  @param is_timer True在setTimeout内调用
@@ -316,14 +777,11 @@ class JsGen(object):
 		target = self.random_item(self.ids)
 		event = self.random_item(self.EVENTS)
 		if is_timer:
-			return self.invoke_function(
-					target, 
-					'dispatchEvent',
-					[['new Event("%s")' % event, TYPE.RAW]])
+			return self.fire_event(target, event)
 		else:
 			return self.invoke_function(target, 'addEventListener', 
 					[[event, TYPE.STRING],
-					[self.create_function(target, ['event'], 
+					[self.create_function(target, ['evt'], 
 						self.random_event_contents()), TYPE.RAW],
 					[self.rand.rbool(), TYPE.VARIABLE]
 					])
@@ -499,7 +957,14 @@ class JsGen(object):
 	@staticmethod
 	def create_function(name, arg_names=[], statements=[]):
 		return 'function %s(%s){%s}' % \
-			(name, ', '.join(arg_names), ''.join(statements))
+			(name, ', '.join(arg_names), JsGen.generate_js_code(statements))
+			
+	## 生成指定js代码序列的js代码
+	#  @param js_sets js代码序列
+	#  @return js代码
+	@staticmethod
+	def generate_js_code(js_sets):
+		return ''.join(map(JsGen.wrapper, js_sets))
 			
 	## try/catch包装语句
 	#  @param statement js语句
