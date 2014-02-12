@@ -4,7 +4,7 @@ import utils
 
 ## js变量类型转换
 #  @todo 考虑是否把declare、assign、invoke_function包装成一个statement类
-#  @todo 没有支持赋值语句定义匿名函数
+#  @todo 支持赋值语句定义匿名函数
 class TYPE(object):
 
 	## JavaScript NULL显示形式
@@ -48,6 +48,11 @@ class TYPE(object):
 ## js代码生成		
 #  @remark 分支和循环太高级，就不支持了 - -#	
 #  @attention 为了简单起见，每一个元素的引用变量和id一致
+#  @remark fuzz代码结构可以在最后生成出代码，之前代码序列存到单独变量
+#  @remark 里方便调整。比如函数体就用list保存，每一个函数是个dict，内
+#  @remark 部字段是name, args, statements，然后在最后生成函数代码；另
+#  @remark 外还有全局代码序列等等
+#  @remark 不过目前没有这种方式的需求
 class JsGen(object):
 	
 	## @var ELEMENTS
@@ -115,6 +120,74 @@ class JsGen(object):
 		'print',
 	]
 	
+	## @var STYLES
+	#  @remark 这是一个字典
+	#  @todo 补齐列表
+	#  样式属性
+	STYLES = {
+		'backgroundAttachment' : ['fixed','scroll'],
+		'backgroundColor' : ['#b0c4de','none'],
+		'backgroundImage' : ['./grind.jpg'],
+		'backgroundPosition' : ['size','50% 50%','10 10','left top','center top','inherit'],
+		'backgroundRepeat' : ['repeat','repeat-x','repeat-y','no-repeat'],
+		'border' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden','four-sides','5px'],
+		'borderBottom' : ['5px','#b0c4de','thick'],
+		'borderBottomColor' : ['#b0c4de'],
+		'borderBottomStyle' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden'],
+		'borderBottomWidth' : ['5px','thick'],
+		'borderColor' : ['#b0c4de'],
+		'borderLeft' : ['10px','#ff0000','thin'],
+		'borderLeftColor' : ['#ff0000'],
+		'borderLeftStyle' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden'],
+		'borderLeftWidth' : ['10px','thin'],
+		'borderRight' : ['5px','#b0c4de','thin'],
+		'borderRightColor' : ['#b0c4de'],
+		'borderRightStyle' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden'],
+		'borderRightWidth' : ['5px','thin'],
+		'borderStyle' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden','four-sides','thick'],
+		'borderTop' : ['5px','#b0c4de','thick'],
+		'borderTopColor' : ['#b0c4de'],
+		'borderTopStyle' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden'],
+		'borderTopWidth' : ['5px','thick'],
+		'borderWidth' : ['5px','thick'],
+		'clear' : ['left','right','both'],
+		'color' : ['#b0c4de'],
+		'display' : ['block','inline'],
+		'float' : ['left','right'],
+		'fontFamily' : ['Georgia'],
+		'fontSize' : ['100%','10px','small','inherit'],
+		'fontStyle' : ['italic','oblique','normal'],
+		'fontVariant' : ['small-caps'],
+		'fontWeight' : ['bold','900'],
+		'height' : ['100px','auto'],
+		'letterSpacing' : ['2px'],
+		'lineHeight' : ['2','90%'],
+		'listStyle' : ['circle','square','disc','upper-alpha','lower-alpha','upper-roman','lower-roman','decimal','inside','outside','none'],
+		'listStyleImage' : ['./grind.jpg'],
+		'listStylePosition' : ['inside','outside'],
+		'listStyleType' : ['circle','square','disc','upper-alpha','lower-alpha','upper-roman','lower-roman','decimal'],
+		'margin' : ['5px','10%','auto'],
+		'marginBottom' : ['2px','30%','auto'],
+		'marginLeft' : ['5px','50%','auto'],
+		'marginRight' : ['5px','50%','auto'],
+		'marginTop' : ['10px','60%','auto'],
+		'padding' : ['5px','100%','four-sides'],
+		'paddingBottom' : ['10px','100%'],
+		'paddingLeft' : ['5px','40%'],	
+		'paddingRight' : ['6px','100%'],
+		'paddingTop' : ['10px','40%'],
+		'position' : ['absolute','relative','100%','100px'],
+		'textAlign' : ['right','center','left','justify'],
+		'textDecoration' : ['line-through','overline','underline','none'],
+		'textIndent' : ['5px','5%'],
+		'textTransform' : ['capitalize','lowercase','uppercase'],
+		'verticalAlign' : ['vertical-values'],
+		'whiteSpace' : ['nowrap'],
+		'width' : ['100pz','100%','auto'],
+		'wordSpacing' : ['2px'],
+		'zIndex' : ['1'],
+	}
+	
 	## @var INTERESTING_VALUES
 	#  特殊值列表
 	INTERESTING_VALUES = [
@@ -127,14 +200,17 @@ class JsGen(object):
 	MAX_OPERATIONS = 50
 	
 	## @var MAX_ELEMENTS
+	#  @remark 未使用
 	#  添加元素数量随机mod
 	MAX_ELEMENTS = 20
 	
 	## @var MAX_PROPERTY
+	#  @remark 未使用
 	#  添加属性数量随机mod
 	MAX_PROPERTY = 9
 	
 	## @var MAX_LISTENERS
+	#  @remark 未使用
 	#  添加事件数量随机mod
 	MAX_LISTENERS = 5
 	
@@ -187,30 +263,34 @@ class JsGen(object):
 				
 	## 创建随机js代码序列
 	#  @param is_timer True在setTimeout内调用
+	#  @param is_event True在event响应函数内调用
 	#  @return js代码序列
-	def random_js_contents(self, is_timer=False):
+	def random_js_contents(self, is_timer=False, is_event=False):
+		# 不能同时存在既在timer内又在event内
+		assert(not is_timer or not is_event)
 		js_content = []
 		operation_counts = self.rand.rint(self.MAX_OPERATIONS)
 		for current_operation_count in xrange(operation_counts):
-			js_content.append(self.random_operate(is_timer))
+			js_content.append(self.random_operate(is_timer, is_event))
 		return map(self.wrapper, js_content)
 		
 	## 创建事件响应js代码序列
 	#  @return js代码序列
-	#  @todo 未实现
 	def random_event_contents(self):
-		js_content = []
-		js_content.append('alert("hahau!!");')
-		return js_content
+		return self.random_js_contents(False, True)
 	
 	## 随机操作
 	#  @param is_timer True在setTimeout内调用
+	#  @param is_event True在event响应函数内调用
 	#  @return 随机操作的js代码
-	def random_operate(self, is_timer=False):
+	def random_operate(self, is_timer=False, is_event=False):
 		type_mod = 4
 		type = self.rand.rint(type_mod)
 		# 事件操作
 		if type == 0:
+			if is_event:
+				# 极端条件下貌似会死循环
+				return self.random_operate(is_timer, is_event)
 			return self.random_event_operate(is_timer)
 		# 样式操作
 		elif type == 1:
@@ -225,7 +305,7 @@ class JsGen(object):
 	## 随机事件操作
 	#  @param is_timer True在setTimeout内调用
 	#  @return 相应js代码
-	#  @todo 还没有对事件的初始化进行处理，如果处理，需要修改self.EVENTS结构，对每一类事件类型有不同的初始化方式
+	#  @todo 对事件的初始化进行处理，如果处理，需要修改self.EVENTS结构，对每一类事件类型有不同的初始化方式
 	#  @attention 包含相关函数定义
 	#  @attention IE6-IE9 需要使用attachEvent而不是addEventListener
 	#  @attention 现在事件对象是默认初始化
@@ -249,9 +329,11 @@ class JsGen(object):
 	## 随机样式操作
 	#  @return 相应js代码
 	def random_style_operate(self):
-		####### TODO  干活
-		#return self.invoke_function('window', 'alert', {'style':TYPE.STRING})
-		return '// style\n'
+		target = self.random_item(self.ids)
+		style = self.random_item(self.STYLES.keys())
+		style_value = self.random_item(self.STYLES[style])
+		return self.assign('.'.join((target, 'style', style)), 
+					style_value, TYPE.STRING)
 		
 	## 随机元素操作
 	#  @param enable_clean_property 允许清空元素的操作
@@ -306,9 +388,8 @@ class JsGen(object):
 		
 	## 随机全局操作
 	#  @return 相应js代码
+	#  @todo 不知道都有啥操作，IE可能有createTextRange等函数
 	def random_global_operate(self):
-		####### TODO  干活
-		#return self.invoke_function('window', 'alert', {'global':TYPE.STRING})
 		return '// global\n'
 		
 	## 创建元素，赋值变量并且设置元素id为对应变量名

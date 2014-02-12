@@ -6,56 +6,52 @@ from js import JsGen
 ## 代表整个生成页面代码
 class PageHolder(object):
 
+	## @var MAX_INIT_ELEMENTS
+	#  最大初始化元素个数
+	MAX_INIT_ELEMENTS = 8
+
 	## 构造函数
 	#  @todo 还在纠结是不是要添加<!doctype html>
 	def __init__(self):
 		# html5头
 		self._page = '<!doctype html>'
 		self._ids = []
-		self._tree = None
-		self._js = None
+		self._elements = []
 		
 	## 构造元素树
+	#  @param id_len id长度，默认10
 	#  @return element.Element 对象
-	#  @todo 未实现
-	def build_element_tree(self):
-		tree = Element('html')
-		
+	#  @todo 随机初始化元素style或者其他属性
+	def build_element_tree(self, id_len=10):
+		root = Element('html')
+		self._elements.append(root)
 		body = Element('body')
 		body.set_attribute('id', 'body')
-		self._ids.append('body')
-		tree.append_child(body)
 		body.set_attribute('onload', 'cold_start()')
+		root.append_child(body)
+		self._ids.append('body')
+		self._elements.append(body)
 		
-		div = Element('div')
-		div.set_attribute('id', 'my_div')
-		self._ids.append('my_div')
-		div.set_attribute('align', 'center')
-		body.append_child(div)
-		
-		h1 = Element('h1')
-		h1.set_attribute('id', 'h1')
-		self._ids.append('h1')
-		h1.set_text('hello')
-		div.append_child(h1)
-		
-		h2 = Element('h2')
-		h2.set_attribute('id', 'h2')
-		self._ids.append('h2')
-		h2.set_text('world')
-		div.append_child(h2)
-		
-		return tree
+		jsgen = JsGen([])
+		init_element_counts = jsgen.rand.rint(self.MAX_INIT_ELEMENTS)
+		for i in xrange(init_element_counts):
+			ele = Element(jsgen.random_item(jsgen.ELEMENTS))
+			ele_id = jsgen.rand.rstr(id_len)
+			ele.set_attribute('id', ele_id)
+			jsgen.random_item(self._elements).append_child(ele)
+			self._ids.append(ele_id)
+			self._elements.append(ele)
+	
+		return root
 	
 	## 生成页面
 	#  @return 页面代码
 	def dump(self):
-		self._tree = self.build_element_tree()
-		self._js = JsGen(self._ids).fuzz()
+		tree = self.build_element_tree()
 		script = Element('script')
-		script.set_text(self._js)
-		self._tree.append_child(script)
-		return self._tree.convert_to_code()
+		script.set_text(JsGen(self._ids).fuzz())
+		tree.append_child(script)
+		return tree.convert_to_code()
 		
 if __name__ == '__main__':
 	page = PageHolder()
