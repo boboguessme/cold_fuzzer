@@ -13,6 +13,15 @@ class Element(object):
 		'html',
 		'script',
 		'iframe',
+		'head',
+		'body',
+		'textarea',
+		'noscript',
+		'code',
+		'xmp',
+		'noframes',
+		'style',
+		'title',
 	]
 	
 	## 构造函数

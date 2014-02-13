@@ -9,7 +9,7 @@ urls = (
 class index:
 	def GET(self):
 		page = PageHolder().dump()
-		with open('/tmp/last_page.html', 'w') as f:
+		with open('/tmp/fs/last_page.html', 'w') as f:
 			f.write(page)
 		return page
 

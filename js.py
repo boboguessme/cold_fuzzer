@@ -100,7 +100,7 @@ class JsGen(object):
 		"head",
 		"header",
 		"hgroup",
-		"hn",
+		"h1",
 		"hr",
 		"html",
 		#"HTML Comment",
@@ -800,7 +800,7 @@ class JsGen(object):
 				target,
 				'dispatchEvent',
 				[[evt_var_name, TYPE.VARIABLE]]))
-		return self.generate_js_code(js_content)
+		return self.generate_js_code(js_content, False)
 				
 			
 	## 随机事件操作
@@ -999,10 +999,14 @@ class JsGen(object):
 			
 	## 生成指定js代码序列的js代码
 	#  @param js_sets js代码序列
+	#  @param wrap True添加try/catch
 	#  @return js代码
 	@staticmethod
-	def generate_js_code(js_sets):
-		return ''.join(map(JsGen.wrapper, js_sets))
+	def generate_js_code(js_sets, wrap=True):
+		if wrap:
+			return ''.join(map(JsGen.wrapper, js_sets))
+		else:
+			return ''.join(js_sets)
 			
 	## try/catch包装语句
 	#  @param statement js语句
