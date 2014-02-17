@@ -272,6 +272,41 @@ class JsGen(object):
 		"load",
 		"select",
 		"resize",
+		### IE反对事件开始
+		"afterupdate",
+		"beforecopy",
+		"beforecut",
+		"beforeeditfocus",
+		"beforepaste",
+		"beforeupdate",
+		"cellchange",
+		"controlselect",
+		"copy",
+		"cut",
+		"dataavailable",
+		"datasetchanged",
+		"datasetcomplete",
+		"errorupdate",
+		"filterchange",
+		"help",
+		"layoutcomplete",
+		"losecapture",
+		"mousewheel",
+		"move",
+		"moveend",
+		"movestart",
+		"propertychange",
+		"resizeend",
+		"resizestart",
+		"rowenter",
+		"rowexit",
+		"rowsdelete",
+		"rowsinserted",
+		"selectionchange",
+		"selectstart",
+		"stop",
+		"storagecommit",
+		### IE反对事件结束
 	]
 	
 	## @var COMMANDS
@@ -661,7 +696,7 @@ class JsGen(object):
 	
 	## @var MAX_OPERATIONS
 	#  fuzz最大操作上限
-	MAX_OPERATIONS = 50
+	MAX_OPERATIONS = 20
 	
 	## @var MAX_ELEMENTS
 	#  添加元素数量随机mod
