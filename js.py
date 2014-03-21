@@ -935,8 +935,8 @@ class JsGen(object):
 		self.ids.append(element_id)
 		self.global_vars.append('var %s;' % element_id)
 		return '%s = %s;%s' % (element_id, 
-					self.create_element(element_tag),
-					self.set_element_id(element_id))
+				self.create_element(element_tag),
+				self.set_element_id(element_id))
 		
 	## 随机创建元素
 	#  @return 相应js代码
