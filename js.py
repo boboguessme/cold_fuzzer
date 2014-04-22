@@ -975,6 +975,19 @@ class JsGen(object):
 	def random_item(self, items):
 		return items[self.rand.rint(len(items))]
 		
+	## 产生DOM style属性值
+	#  @param count 样式个数
+	#  @return 形如 position:static;...
+	def generate_style_attribute(self, count=1):
+		if count < 1:
+			count = 1
+		result = []
+		for i in xrange(count):
+			style = self.random_item(self.STYLES.keys())
+			value = self.random_item(self.STYLES[style])
+			result.append('%s:%s;' % (style, value))
+		return ''.join(result)
+		
 	## 生成变量声明语句
 	#  @param name 变量名
 	#  @param value 变量值
@@ -1049,6 +1062,7 @@ class JsGen(object):
 	@staticmethod
 	def wrapper(statement):
 		return 'try{%s}catch(exception){};' % statement
+		
 		
 if __name__ == '__main__':
 	print 'declare has tested assign'
