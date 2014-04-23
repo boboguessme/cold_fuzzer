@@ -622,69 +622,213 @@ class JsGen(object):
 	## @var STYLES
 	#  样式属性
 	#  @remark 这是一个字典
-	#  @todo 补齐列表	
+	#  @remark key默认是style标签或者属性可直接使用的，在js语句中需要做转换	
 	STYLES = {
-		'backgroundAttachment' : ['fixed','scroll'],
-		'backgroundColor' : ['#b0c4de','none'],
-		'backgroundImage' : ['./grind.jpg'],
-		'backgroundPosition' : ['size','50% 50%','10 10','left top','center top','inherit'],
-		'backgroundRepeat' : ['repeat','repeat-x','repeat-y','no-repeat'],
-		'border' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden','four-sides','5px'],
-		'borderBottom' : ['5px','#b0c4de','thick'],
-		'borderBottomColor' : ['#b0c4de'],
-		'borderBottomStyle' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden'],
-		'borderBottomWidth' : ['5px','thick'],
-		'borderColor' : ['#b0c4de'],
-		'borderLeft' : ['10px','#ff0000','thin'],
-		'borderLeftColor' : ['#ff0000'],
-		'borderLeftStyle' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden'],
-		'borderLeftWidth' : ['10px','thin'],
-		'borderRight' : ['5px','#b0c4de','thin'],
-		'borderRightColor' : ['#b0c4de'],
-		'borderRightStyle' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden'],
-		'borderRightWidth' : ['5px','thin'],
-		'borderStyle' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden','four-sides','thick'],
-		'borderTop' : ['5px','#b0c4de','thick'],
-		'borderTopColor' : ['#b0c4de'],
-		'borderTopStyle' : ['solid','double','groove','dotted','dashed','inset','outset','ridge','hidden'],
-		'borderTopWidth' : ['5px','thick'],
-		'borderWidth' : ['5px','thick'],
-		'clear' : ['left','right','both'],
-		'color' : ['#b0c4de'],
-		'display' : ['block','inline'],
-		'float' : ['left','right'],
-		'fontFamily' : ['Georgia'],
-		'fontSize' : ['100%','10px','small','inherit'],
-		'fontStyle' : ['italic','oblique','normal'],
-		'fontVariant' : ['small-caps'],
-		'fontWeight' : ['bold','900'],
-		'height' : ['100px','auto'],
-		'letterSpacing' : ['2px'],
-		'lineHeight' : ['2','90%'],
-		'listStyle' : ['circle','square','disc','upper-alpha','lower-alpha','upper-roman','lower-roman','decimal','inside','outside','none'],
-		'listStyleImage' : ['./grind.jpg'],
-		'listStylePosition' : ['inside','outside'],
-		'listStyleType' : ['circle','square','disc','upper-alpha','lower-alpha','upper-roman','lower-roman','decimal'],
-		'margin' : ['5px','10%','auto'],
-		'marginBottom' : ['2px','30%','auto'],
-		'marginLeft' : ['5px','50%','auto'],
-		'marginRight' : ['5px','50%','auto'],
-		'marginTop' : ['10px','60%','auto'],
-		'padding' : ['5px','100%','four-sides'],
-		'paddingBottom' : ['10px','100%'],
-		'paddingLeft' : ['5px','40%'],	
-		'paddingRight' : ['6px','100%'],
-		'paddingTop' : ['10px','40%'],
-		'position' : ['absolute','relative','100%','100px'],
-		'textAlign' : ['right','center','left','justify'],
-		'textDecoration' : ['line-through','overline','underline','none'],
-		'textIndent' : ['5px','5%'],
-		'textTransform' : ['capitalize','lowercase','uppercase'],
-		'verticalAlign' : ['vertical-values'],
-		'whiteSpace' : ['nowrap'],
-		'width' : ['100pz','100%','auto'],
-		'wordSpacing' : ['2px'],
-		'zIndex' : ['1'],
+		"align-content": ["stretch", "center", "flex-start", "flex-end", "space-between", "space-around", "initial", "inherit"],
+		"align-items": ["stretch", "center", "flex-start", "flex-end", "baseline", "initial", "inherit"],
+		"align-self": ["auto", "stretch", "center", "flex-start", "flex-end", "baseline", "initial", "inherit"],
+		"animation-delay": ["1s", "1073741823s", "initial", "inherit"],
+		"animation-direction": ["normal", "reverse", "alternate", "alternate-reverse", "initial", "inherit"],
+		"animation-duration": ["1s", "1073741823s", "initial", "inherit"],
+		"animation-fill-mode": ["none", "forwards", "backwards", "both", "initial", "inherit"],
+		"animation-iteration-count": ["1", "1073741823", "infinite", "initial", "inherit"],
+		"animation-name": ["Oops", "none", "initial", "inherit"], # 不清楚怎么构造
+		"animation-play-state": ["none", "initial", "inherit"],
+		"animation-timing-function": ["linear", "ease", "ease-in", "ease-out", "cubic-bezier(0.25, 0.1, 0.25, 1)", "initial", "inherit"],
+		"backface-visibility": ["visible", "hidden", "initial", "inherit"],
+		"background-attachment": ["scroll", "fixed", "local", "initial", "inherit"],
+		"background-clip": ["border-box", "padding-box", "content-box", "initial", "inherit"],
+		"background-color": ["#ffc00c", "transparent", "initial", "inherit"],
+		"background-image": ["url('cold_fuzz.jpg')", "none", "initial", "inherit"],
+		"background-origin": ["padding-box", "border-box", "content-box", "initial", "inherit"],
+		"background-position": ["left top", "right center", "center bottom", "2% 3%", "2px 3px", "initial", "inherit"],
+		"background-repeat": ["repeat", "repeat-x", "repeat-y", "no-repeat", "initial", "inherit"],
+		"background-size": ["auto", "12", "1073741823", "cover", "contain", "intial", "inherit"],
+		"border-bottom-color": ["blue", "transparent", "initial", "inherit"],
+		"border-bottom-left-radius": ["25px," "12%", "initial", "inherit"],
+		"border-bottom-right-radius": ["25px," "12%", "initial", "inherit"],
+		"border-bottom-style": ["none", "hidden", "dotted", "dashed", "solid", "double", "groove", "ridge", "inset", "outset", "initial", "inherit"],
+		"border-bottom-width": ["medium", "thin", "thick", "10px", "initial", "inherit"],
+		"border-collapse": ["separate", "collapse", "initial", "inherit"],
+		"border-color": ["blue", "transparent", "initial", "inherit"],
+		"border-image-outset": ["4", "1073741823", "initial", "inherit"],
+		"border-image-repeat": ["stretch", "repeat", "round", "initial", "inherit"],
+		"border-image-slice": ["50%", "fill", "initial", "inherit"],
+		"border-image-source": ["none", "url('cold_fuzz.jpg')", "initial", "inherit"],
+		"border-image-width": ["20px 30px", "20% 30%", "auto", "initial", "inherit"],
+		"border-left-color": ["blue", "transparent", "initial", "inherit"],
+		"border-left-style": ["none", "hidden", "dotted", "dashed", "solid", "double", "groove", "ridge", "inset", "outset", "initial", "inherit"],
+		"border-left-width": ["medium", "thin", "thick", "0px", "initial", "inherit"],
+		"border-right-color": ["blue", "transparent", "initial", "inherit"],
+		"border-right-style": ["none", "hidden", "dotted", "dashed", "solid", "double", "groove", "ridge", "inset", "outset", "initial", "inherit"],
+		"border-right-width": ["medium", "thin", "thick", "0px", "initial", "inherit"],
+		"border-spacing": ["15px 10px", "initial", "inherit"],
+		"border-style": ["none", "hidden", "dotted", "dashed", "solid", "double", "groove", "ridge", "inset", "outset", "initial", "inherit"],
+		"border-top-color": ["blue", "transparent", "initial", "inherit"],
+		"border-top-left-radius": ["25px," "12%", "initial", "inherit"],
+		"border-top-right-radius": ["25px," "12%", "initial", "inherit"],
+		"border-top-style": ["none", "hidden", "dotted", "dashed", "solid", "double", "groove", "ridge", "inset", "outset", "initial", "inherit"],
+		"border-top-width": ["medium", "thin", "thick", "10px", "initial", "inherit"],
+		"bottom": ["auto", "10px", "initial", "inherit"],
+		"box-shadow": ["none", "10px 20px 30px blue", "inset", "initial", "inherit"],
+		"box-sizing": ["content-box", "border-box", "initial", "inherit"],
+		"break-after": ["auto", "always", "avoid", "left", "right", "page", "column", "avoid-page", "avoid-column"], # IE独有
+		"break-before": ["auto", "always", "avoid", "left", "right", "page", "column", "avoid-page", "avoid-column"], # IE独有
+		"break-inside": ["auto", "avoid", "avoid-page", "avoid-column"], # IE独有
+		"caption-side": ["top", "bottom", "initial", "inherit"],
+		"clear": ["none", "left", "right", "both", "initial", "inherit"],
+		"clip": ["auto", "rect(0px, 50px, 50px, 0px)", "initial", "inherit"],
+		"clip-path": ["none", "Oops"], # IE独有 不知道怎么构造
+		"clip-rule": ["nonzero", "evenodd", "inherit"], # IE独有
+		"color": ["blue", "#fc0fff"],
+		"column-count": ["3", "1073741823", "auto", "initial", "inherit"], # 这个3是数字类型，这里暂时用字符串
+		"column-fill": ["balance", "auto", "initial", "inherit"],
+		"column-gap": ["50px", "normal", "initial", "inherit"],
+		"column-rule-color": ["blue", "initial", "inherit"],
+		"column-rule-style": ["none", "hidden", "dotted", "dashed", "solid", "double", "groove", "ridge", "inset", "outset", "initial", "inherit"],
+		"column-rule-width": ["medium", "thin", "thick", "10px", "initial", "inherit"],
+		"column-span": ["3", "1073741823", "all", "initial", "inherit"],
+		"column-width": ["auto", "100px", "initial", "inherit"],
+		# "content": normal, 据说不能用js直接赋值 http://www.w3schools.com/cssref/pr_gen_content.asp
+		"counter-increment": ["none", "3", "1073741823", "initial", "inherit"],
+		"counter-reset": ["none", "3", "1073741823", "initial", "inherit"],
+		"cursor": ["alias", "all-scroll", "auto", "cell", "context-menu", "col-resize", "copy", "crosshair", "default", "e-resize", "ew-resize", "help", "move", "n-resize", "ne-resize", "nesw-resize", "ns-resize", "nw-resize", "nwse-resize", "no-drop", "none", "not-allowed", "pointer", "progress", "row-resize", "s-resize", "se-resize", "sw-resize", "text", "url('cold_fuzz.jpg')", "vertical-text", "w-resize", "wait", "zoom-in", "zoom-out", "initial", "inherit"],
+		"direction": ["ltr", "rtl", "initial", "inherit"],
+		"display": ["inline", "block", "flex", "inline-block", "inline-flex", "inline-table", "list-item", "run-in", "table", "table-caption", "table-column-group", "table-header-group", "table-footer-group", "table-row-group", "table-cell", "table-column", "table-row", "none", "initial", "inherit"],
+		"dominant-baseline": ["auto", "use-script", "no-change", "reset-size", "ideographic", "alphabetic", "hanging", "mathematical", "central", "middle", "text-after-edge", "text-before-edge", "inherit"], # IE独有
+		"empty-cells": ["show", "hide", "initial", "inherit"],
+		"enable-background": ["accumulate", "inherit", "new 20 30 100 200"], # IE独有 这个new瞎写的
+		"fill": ["none", "currentColor", "funciri", "inherit"], # IE独有
+		"fill-opacity": ["0.5", "0.3999999999", "inherit"], # IE独有
+		"fill-rule": ["nonzero", "evenodd", "inherit"], # IE独有
+		#"filter": ["none"], # IE独有 貌似挺复杂，先不用
+		"flex-basis": ["10px", "20%", "auto", "initial", "inherit"],
+		"flex-direction": ["row", "row-reverse", "column", "column-reverse", "initial", "inherit"],
+		"flex-grow": ["5", "1073741823", "initial", "inherit"],
+		"flex-shrink": ["5", "1073741823", "initial", "inherit"],
+		"flex-wrap": ["nowrap", "wrap", "wrap-reverse", "initial", "inherit"],
+		"float": ["none", "left", "right", "initial", "inherit"],
+		"flood-color": ["blue", "currentColor", "inherit"], # IE独有
+		"flood-opacity": ["0.5", "0.3999999999", "inherit"], # IE独有
+		"font-family": ["arial", "Verdana,sans-serif", "initial", "inherit"],
+		"font-feature-settings": ["normal", "kern, dlig", "tnum, ss01", "kern", "smcp", "liga", "dlig", "ss01", "ss10", "ss20", "swsh", "tnum", "lnum", "onum"], # IE独有
+		"font-size": ["medium", "xx-small", "x-small", "small", "large", "x-large", "xx-large", "smaller", "larger", "14px", "initial", "inherit"],
+		"font-size-adjust": ["0.58", "none", "initial", "inherit"],
+		"font-stretch": ["wider", "narrower", "ultra-condensed", "extra-condensed", "condensed", "semi-condensed", "normal", "semi-expanded", "expanded", "extra-expanded", "ultra-expanded", "initial", "inherit"],
+		"font-style": ["normal", "italic", "oblique", "initial", "inherit"],
+		"font-variant": ["normal", "small-caps", "initial", "inherit"],
+		"font-weight": ["normal", "bold", "bolder", "lighter", "888", "1073741823", "initial", "inherit"],
+		"glyph-orientation-horizontal": ["80deg", "inherit"], # IE独有
+		"glyph-orientation-vertical": ["auto", "80deg", "inherit"], # IE独有
+		"height": ["auto", "500px", "initial", "inherit"],
+		"ime-mode": ["auto", "active", "inactive", "disabled"], # IE独有
+		"justify-content": ["flex-start", "flex-end", "center", "space-between", "space-around", "initial", "inherit"],
+		"kerning": ["auto", "inherit", "3", "1073741823"], # IE独有
+		"layout-flow": ["horizontal", "vertical-ideographic"], # IE独有
+		"layout-grid-char": ["none", "auto", "20px", "33%"], # IE独有
+		"layout-grid-line": ["none", "auto", "20px", "33%"], # IE独有
+		"layout-grid-mode": ["both", "none", "line", "char"], # IE独有
+		"layout-grid-type": ["loose", "strict", "fixed"], # IE独有
+		"left": ["auto", "100px", "initial", "inherit"],
+		"letter-spacing": ["normal", "3px", "initial", "inherit"],
+		"lighting-color": ["blue", "rgb(30,22,40)", "currentColor", "inherit"], # IE独有
+		"line-break": ["normal", "strict"], # IE独有
+		"line-height": ["normal", "30px", "6", "1073741823", "length", "initial", "inherit"],
+		"list-style-image": ["none", "url('cold_fuzz.jpg')", "initial", "inherit"],
+		"list-style-position": ["inside", "outside", "initial", "inherit"],
+		"list-style-type": ["disc", "armenian", "circle", "cjk-ideographic", "decimal", "decimal-leading-zero", "georgian", "hebrew", "hiragana", "hiragana-iroha", "katakana", "katakana-iroha", "lower-alpha", "lower-greek", "lower-latin", "lower-roman", "none", "square", "upper-alpha", "upper-latin", "upper-roman", "initial", "inherit"],
+		"margin-bottom": ["100px", "auto", "initial", "inherit"],
+		"margin-left": ["100px", "auto", "initial", "inherit"],
+		"margin-right": ["100px", "auto", "initial", "inherit"],
+		"margin-top": ["100px", "auto", "initial", "inherit"],
+		"marker": ["none", "url('cold_fuzz.jpg')", "inherit"], # IE独有
+		"marker-end": ["none", "url('cold_fuzz.jpg')", "inherit"], # IE独有
+		"marker-mid": ["none", "url('cold_fuzz.jpg')", "inherit"], # IE独有
+		"marker-start": ["none", "url('cold_fuzz.jpg')", "inherit"], # IE独有
+		"mask": ["none", "url('cold_fuzz.jpg')", "inherit"], # IE独有
+		"max-height": ["100px", "none", "initial", "inherit"],
+		"max-width": ["100px", "none", "initial", "inherit"],
+		"min-height": ["20px", "initial", "inherit"],
+		"min-width": ["20px", "auto", "initial", "inherit"],
+		"opacity": ["0.5", "initial", "inherit"],
+		"order": ["2", "1073741823", "initial", "inherit"],
+		"orphans": ["2", "1073741823"], # IE独有
+		"outline-color": ["transparent", "invert", "#FF00CC", "initial", "inherit"],
+		"outline-style": ["none", "hidden", "dotted", "dashed", "solid", "double", "groove", "ridge", "inset", "outset", "initial", "inherit"],
+		"outline-width": ["medium", "thin", "thick", "2px", "initial", "inherit"],
+		"overflow": ["visible", "hidden", "scroll", "auto", "initial", "inherit"],
+		"overflow-x": ["visible", "hidden", "scroll", "auto", "initial", "inherit"],
+		"overflow-y": ["visible", "hidden", "scroll", "auto", "initial", "inherit"],
+		"padding-bottom": ["50px", "50%", "50cm", "50pt", "initial", "inherit"],
+		"padding-left": ["50px", "50%", "50cm", "50pt", "initial", "inherit"],
+		"padding-right": ["50px", "50%", "50cm", "50pt", "initial", "inherit"],
+		"padding-top": ["50px", "50%", "50cm", "50pt", "initial", "inherit"],
+		"page-break-after": ["auto", "always", "avoid", "left", "right", "initial", "inherit"],
+		"page-break-before": ["auto", "always", "avoid", "left", "right", "initial", "inherit"],
+		"page-break-inside": ["auto", "avoid", "initial", "inherit"],
+		"perspective": ["50px", "none"],
+		"perspective-origin": ["10px 5px", "10px 50%", "top 25%", "left center", "35px bottom", "initial", "inherit"],
+		"pointer-events": ["visiblePainted", "visibleFill", "visibleStroke", "visible", "painted", "fill", "stroke", "all", "none", "inherit"], # IE独有
+		"position": ["static", "absolute", "fixed", "relative", "initial", "inherit"],
+		"quotes": ["none", "<<' '>>", "initial", "inherit"],
+		"right": ["auto", "200px", "initial", "inherit"],
+		"ruby-align": ["auto", "left", "center", "right", "distribute-letter", "distribute-space", "line-edge"], # IE独有
+		"ruby-overhang": ["auto", "whitespace", "none"], # IE独有
+		"ruby-position": ["above", "inline"], # IE独有
+		"scrollbar-3dlight-color": ["#000000", "#e3e3e3"], # IE独有
+		"scrollbar-arrow-color": ["#000000", "#f2c083"], # IE独有
+		"scrollbar-base-color": ["#000000", "#f2c083"], # IE独有
+		"scrollbar-darkshadow-color": ["#000000", "#696969"], # IE独有
+		"scrollbar-face-color": ["#000000", "#f0f0f0"], # IE独有
+		"scrollbar-highlight-color": ["#000000", "#ffffff"], # IE独有
+		"scrollbar-shadow-color": ["#000000", "#a0a0a0"], # IE独有
+		"scrollbar-track-color": ["#000000", "#0a0a0a"], # IE独有
+		"stop-color": ["currentColor", "inherit"], # IE独有
+		"stop-opacity": ["0.33", "inherit"], # IE独有
+		"stroke": ["none", "currentColor", "inherit", "#000000", "#ffc00c", "url('cold_fuzz.jpg')"], # IE独有
+		"stroke-dasharray": ["none", "inherit", "2,30%,1.5,120%"], # IE独有
+		"stroke-dashoffset": ["20px", "20%", "inherit", "120%"], # IE独有
+		"stroke-linecap": ["butt", "round", "bevel"], # IE独有
+		"stroke-linejoin": ["miter", "round", "bevel", "inherit"], # IE独有
+		"stroke-miterlimit": ["4", "inherit", "20", "1073741823"], # IE独有
+		"stroke-opacity": ["0.3", "inherit"], # IE独有
+		"stroke-width": ["0.01px", "30cm", "20%", "inherit"], # IE独有
+		"table-layout": ["auto", "fixed", "initial", "inherit"],
+		"text-align": ["left", "right", "center", "justify", "initial", "inherit"],
+		"text-align-last": ["auto", "left", "right", "center", "justify", "start", "end", "initial", "inherit"],
+		"text-anchor": ["start", "middle", "end", "inherit"], # IE独有
+		"text-autospace": ["none", "ideograph-alpha", "ideograph-numeric", "ideograph-parenthesis", "ideograph-space"], # IE独有
+		"text-decoration": ["none", "underline", "overline", "line-through", "initial", "inherit"],
+		"text-indent": ["50px", "initial", "inherit"],
+		"text-justify": ["auto", "inter-word", "inter-ideograph", "inter-cluster", "distribute", "kashida", "trim", "initial", "inherit"],
+		#"text-justify-trim": ["auto"], # IE独有 msdn没查到
+		#"text-kashida": ["0%"], # IE独有 msdn没查到
+		"text-kashida-space": ["20%", "200%"], # IE独有
+		"text-overflow": ["clip", "ellipsis", "string", "initial", "inherit"],
+		"text-shadow": ["2px 5px 5px red", "none", "initial", "inherit"],
+		"text-transform": ["none", "capitalize", "uppercase", "lowercase", "initial", "inherit"],
+		"text-underline-position": ["above", "below", "auto", "auto-pos"], # IE独有
+		"top": ["auto", "length", "initial", "inherit"],
+		"touch-action": ["auto", "none", "pan-x", "pan-y", "pinch-zoom", "manipulation", "double-tap-zoom", "cross-slide-x", "cross-slide-y"], # IE独有
+		"transform": ["matrix(0.866,0.5,-0.5,0.866,0,0)", "matrix3d(0.866,0.5,-0.5,0.866,0,0,0,0,0,0,0,0,0,0,0,0)", "translate(20px,10px)", "translate3d(20px,10px, 5px)", "translateX(-25px)", "translateY(-25px)", "translateZ(-25px)", "scale(0.5,2)", "scale3d(0.5,2,1)", "scaleX(3)", "scaleY(3)", "scaleZ(3)", "rotate(170deg)", "rotate3d(0.4, 0.2, 0.5, 20deg)", "rotateX(120deg)", "rotateY(40deg)", "rotateZ(90deg)", "skew(50deg,50deg)", "skewX(80deg)", "skewY(80deg)", "perspective(2)", "none", "initial", "inherit"], #WARNING: 3d结尾函数参数都是瞎写的
+		"transform-origin": ["3px 8px", "3px 8px 2px", "left 50%", "2px bottom 1px", "initial", "inherit"],
+		"transform-style": ["flat", "preserve-3d", "initial", "inherit"],
+		"transition-delay": ["2ms", "1s", "1073741823s", "initial", "inherit"],
+		"transition-duration": ["2ms", "1s", "1073741823s", "initial", "inherit"],
+		"transition-property": ["one", "all", "width,height", "initial", "inherit"],
+		"transition-timing-function": ["ease", "linear", "ease-in", "ease-out", "ease-in-out", "cubic-bezier(0.25, 0.1, 0.25, 1)", "initial", "inherit"],
+		"unicode-bidi": ["normal", "embed", "bidi-override", "intitial", "inherit"],
+		"vertical-align": ["baseline", "10px", "10%", "sub", "super", "top", "text-top", "middle", "bottom", "text-bottom", "initial", "inherit"],
+		"visibility": ["visible", "hidden", "collapse", "initial", "inherit"],
+		"white-space": ["normal", "nowrap", "pre", "pre-line", "pre-wrap", "initial", "inherit"],
+		"widows": ["2", "200", "1073741823"], # IE独有
+		"width": ["auto", "300px", "20%", "initial", "inherit"],
+		"word-break": ["normal", "break-all", "keep-all", "initial", "inherit"],
+		"word-spacing": ["normal", "20px", "initial", "inherit"],
+		"word-wrap":  ["normal", "break-word", "initial", "inherit"],
+		"writing-mode": ["lr-tb", "rl-tb", "tb-rl", "bt-rl", "tb-lr", "bt-lr", "lr-bt", "rl-bt", "lr", "rl", "tb"], # IE独有
+		"z-index": ["auto", "-1", "1073741823", "initial", "inherit"],
+		"zoom": ["normal", "0.4", "20%", "2.6", "250%"], # IE独有
 	}
 	
 	## @var INTERESTING_VALUES
@@ -864,8 +1008,11 @@ class JsGen(object):
 	def random_style_operate(self):
 		target = self.random_item(self.ids)
 		style = self.random_item(self.STYLES.keys())
+		# 转换style名称  例如letter-scaping转成letterScaping
+		style_name = ''.join(map(lambda x: x.capitalize(), style.split('-')))
+		style_name = '%s%s' % (style_name[0].lower(), style_name[1:])
 		style_value = self.random_item(self.STYLES[style])
-		return self.assign('.'.join((target, 'style', style)), 
+		return self.assign('.'.join((target, 'style', style_name)), 
 					style_value, TYPE.STRING)
 		
 	## 随机元素操作
