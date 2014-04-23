@@ -11,7 +11,7 @@ class PageHolder(object):
 	MAX_INIT_ELEMENTS = 8
 	
 	## @var MAX_STYLE_COUNTS
-	# 	最大style样式个数
+	#  最大style样式个数
 	MAX_STYLE_COUNTS = 3
 
 	## 构造函数
