@@ -18,7 +18,7 @@ class PageHolder(object):
 	#  @todo 还在纠结是不是要添加<!doctype html>  fuzz SVG可能就不能增加
 	def __init__(self):
 		# html5头
-		self._page = '<!doctype html>'
+		self._htmlpage = '<!DOCTYPE html>'
 		self._ids = []
 		self._elements = []
 		self._jsgen = JsGen([])
@@ -64,17 +64,17 @@ class PageHolder(object):
 	
 	## 生成页面
 	#  @return 页面代码
-	def dump(self):
+	def dump_html(self):
 		tree = self.build_element_tree()
 		script = Element('script')
 		script.set_text(JsGen(self._ids).fuzz())
 		tree.append_child(script)
-		return tree.convert_to_code()
+		return ''.join((self._htmlpage, tree.convert_to_code()))
 		
 if __name__ == '__main__':
 	page = PageHolder()
 	
 	import os
 	with open(os.path.join('test', 'test_pageholder.html'), 'wb') as f:
-		f.write(page.dump())
+		f.write(page.dump_html())
 		
