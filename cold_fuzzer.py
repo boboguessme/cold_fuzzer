@@ -15,9 +15,7 @@ class PageHolder(object):
 	MAX_STYLE_COUNTS = 3
 
 	## 构造函数
-	#  @todo 还在纠结是不是要添加<!doctype html>  fuzz SVG可能就不能增加
 	def __init__(self):
-		# html5头
 		self._htmlpage = '<!DOCTYPE html>'
 		self._ids = []
 		self._elements = []
