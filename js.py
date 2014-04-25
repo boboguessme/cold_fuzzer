@@ -1070,7 +1070,7 @@ class JsGen(object):
 	#  @return 相应js代码
 	#  @todo 不知道都有啥操作，IE可能有createTextRange等函数
 	def random_global_operate(self):
-		return '// global\n'
+		return 'CollectGarbage();'
 		
 	## 创建元素，赋值变量并且设置元素id为对应变量名
 	#  @param element_tag 元素tag名称
