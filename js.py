@@ -1047,16 +1047,22 @@ class JsGen(object):
 				return self.random_element_operate(enable_clean_property)
 			return self.assign(
 					'.'.join((self.random_item(self.ids), self.random_item(self.BLACK_PROPERTIES))),
-					'null', TYPE.NULL)		
+					'null', TYPE.NULL)	
+		# 交叉引用元素内容
+		elif type == 3:
+			return self.assign(
+					'.'.join((self.random_item(self.ids), self.random_item(self.BLACK_PROPERTIES))),
+					'.'.join((self.random_item(self.ids), self.random_item(self.BLACK_PROPERTIES))),
+					TYPE.VARIABLE)
 		# 元素相互引用
 		# 随机选取元素添加到另一随意元素
-		elif type == 3:
+		elif type == 4:
 			child_element = self.random_item(self.ids)
 			parent_element = self.random_item(self.ids)
 			return self.invoke_function(
 					parent_element, 'appendChild', [[child_element,TYPE.VARIABLE]])
 		#  赋值元素属性
-		elif type == 4:
+		elif type == 5:
 			current_element = self.random_item(self.ids)
 			return self.assign(
 					'.'.join((current_element, self.random_item(self.PROPERTIES))), 
